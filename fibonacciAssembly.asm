@@ -95,7 +95,77 @@ userInstructions:
 	call	WriteString
 	call	CrLf
 
+; Get the value for required Fibbonacci numbers
+getUserData:
+	call	CrLf
+	mov		edx, OFFSET prompt_3
+	call	WriteString
+	call	ReadInt
+	mov		user_val, eax
+	call	CrLf
 
+; Validate user input to be integer in range [1,46]
+	mov		eax, user_val
+	mov		ebx, MIN_VAL
+	cmp		eax, ebx
+	jl		inputError									; Jump to error if input value < 1
+	mov		ebx, MAX_VAL
+	cmp		eax, ebx
+	jg		inputError									; Jump to error if input value > 46
+
+
+; *********  Start Fibnonacci Sequence  *********
+	mov		eax, cyan
+	call	SetTextColor								; Sets the output text color (Using Irvine32.inc)
+	mov		eax, 1										; REF: CS271 Textbook: Assembly Language 7th Ed; Pg.167)
+	call	WriteDec
+	mov		edx, OFFSET EC_space9
+	call	WriteString
+	dec		user_val									; Decrement loop count by 1 as I already output 1st #
+
+	mov		eax, user_val
+	cmp		eax, 0										; When loop reaches 0, prepare to show goodbye messages 
+	je		farewell
+
+	mov		ebx, 0									
+	mov		edx, 1
+	mov		ecx, user_val								; Loop count
+
+displayFibs:
+	mov		eax, ebx			
+	add		eax, edx
+	jmp		ColOutput
+
+; Output added fibonacci number
+fibLoop:
+	mov		ebx, edx
+	mov		edx, eax
+	loop	displayFibs
+
+farewell:
+; Display goodbye message and exit
+	mov		text_color, white
+	mov		eax, text_color
+	call	SetTextColor
+	call	CrLf
+	call	CrLf
+	mov		edx, OFFSET goodbye_1
+	call	WriteString
+	mov		edx, OFFSET user_name
+	call	WriteString
+	mov		edx, OFFSET goodbye_2
+	call	WriteString
+	call	CrLf
+	exit												; Exit out to the operating system
+
+
+
+
+; On range error, display error message and jump back to number input block
+inputError:
+	mov		edx, OFFSET error
+	call	WriteString
+	jmp		getUserData
 
 main ENDP
 END main
