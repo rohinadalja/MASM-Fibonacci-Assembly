@@ -159,7 +159,113 @@ farewell:
 	exit												; Exit out to the operating system
 
 
+; ******  HELPER CODE -  WILL ONLY EXECUTE IF CALLED  ******
+; Make sure output is limited to 5 per line, colours are changed every line, and appropriate spacing is added
+ColOutput:
+	cmp		loop_val, 5
+	je		EC2_Colors
+	call	WriteDec
+	inc		loop_val
+	jmp		EC1_Spaces
 
+NewColumn:
+	call	CrLf
+	call	WriteDec
+	mov		loop_val, 1									; Column number count is 1 after writing first number above
+	jmp		EC1_Spaces
+
+; For aligining numbers in columns with spaces
+EC1_Spaces:
+	cmp		eax, 10
+	jl		AddSpace9
+	cmp		eax, 100
+	jl		AddSpace8
+	cmp		eax, 1000
+	jl		AddSpace7
+	cmp		eax, 10000
+	jl		AddSpace6
+	cmp		eax, 100000
+	jl		AddSpace5
+	cmp		eax, 1000000
+	jl		AddSpace4
+	cmp		eax, 10000000
+	jl		AddSpace3
+	cmp		eax, 100000000
+	jl		AddSpace2
+	cmp		eax, 1000000000
+	jl		AddSpace1
+
+AddSpace9:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space9
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace8:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space8
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace7:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space7
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace6:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space6
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace5:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space5
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace4:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space4
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace3:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space3
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace2:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space2
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+AddSpace1:
+	mov		temp_val, edx
+	mov		edx, OFFSET EC_space1
+	call	WriteString
+	mov		edx, temp_val
+	jmp		fibLoop
+
+; Add some awesome colors to the normally plain output
+EC2_Colors:
+	mov		temp_val, eax
+	inc		text_color									; Switch color to next listed in the table on Pg. 167
+	mov		eax, text_color
+	call	SetTextColor								; Sets the output text color (Using Irvine32.inc)
+	mov		eax, temp_val
+	jmp		NewColumn
 
 ; On range error, display error message and jump back to number input block
 inputError:
